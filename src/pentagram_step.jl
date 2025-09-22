@@ -8,7 +8,7 @@ cross3(a::SVector{3,T}, b::SVector{3,T}) where T = SVector(
     a[1]*b[2] - a[2]*b[1]
 )
 
-r"""
+"""
     pentagram_step(polygon::Vector{SVector{3,Float64}}) -> Vector{SVector{3,Float64}}
 
 Perform one step of the pentagram map on a polygon given in homogeneous coordinates.
