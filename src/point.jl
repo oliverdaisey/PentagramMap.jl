@@ -43,3 +43,59 @@ function affine_coords(p::AbstractVector{<:BaseRing})
     end
     return (Float64(p[1] / p[end]), Float64(p[2] / p[end]))
 end
+
+"""
+    best_coord_index(a_aff::Tuple, b_aff::Tuple) -> Int
+
+Return index (1 or 2) of coordinate with maximal absolute difference between a and b.
+
+This picks a stable coordinate to parametrize the line in the affine chart.
+"""
+function best_coord_index(a_aff::Tuple, b_aff::Tuple)
+    # compare absolute differences in each coordinate
+    dx = abs(b_aff[1] - a_aff[1])
+    dy = abs(b_aff[2] - a_aff[2])
+    return dx >= dy ? 1 : 2
+end
+
+function scalar_on_line(a_aff::Tuple, b_aff::Tuple, p_aff::Tuple)
+    k = best_coord_index(a_aff, b_aff)
+    num = (k == 1) ? (p_aff[1] - a_aff[1]) : (p_aff[2] - a_aff[2])
+    den = (k == 1) ? (b_aff[1] - a_aff[1]) : (b_aff[2] - a_aff[2])
+    if den == 0
+        error("Degenerate line: chosen coordinate difference is zero.")
+    end
+    return num / den
+end
+
+function det3(a::AbstractVector, b::AbstractVector, c::AbstractVector)
+    return a[1]*(b[2]*c[3] - b[3]*c[2]) -
+           a[2]*(b[1]*c[3] - b[3]*c[1]) +
+           a[3]*(b[1]*c[2] - b[2]*c[1])
+end
+
+"""
+    cross_ratio_on_line(a, b, c, d) -> BaseRing
+"""
+function cross_ratio_on_line(a::AbstractVector, b::AbstractVector,
+                             c::AbstractVector, d::AbstractVector; o::AbstractVector = [0,0,1])
+    D1 = det3(o,a,b)
+    if D1 == 0
+        if o == [0,0,1]
+            o = [1,0,0]
+            return cross_ratio_on_line(a, b, c, d; o=o)
+        elseif o == [1,0,0]
+            o = [0,1,0]
+            return cross_ratio_on_line(a, b, c, d; o=o)
+        else
+            error("Something is wrong")
+        end
+    end
+    num = det3(o,a,c) * det3(o,b,d)
+    den = det3(o,a,d) * det3(o,b,c)
+
+    if den == 0
+        error("Choose a different o")
+    end
+    return num/den
+end
