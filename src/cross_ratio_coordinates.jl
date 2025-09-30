@@ -1,4 +1,4 @@
-export cross_ratio_coordinates, pentagram_map, casimirs
+export cross_ratio_coordinates, pentagram_map
 
 """
     cross_ratio_coordinates(tp::TwistedPolygon)
@@ -75,30 +75,4 @@ function pentagram_map(x::Vector, y::Vector)
 
     return newX, newY
 
-end
-
-"""
-    casimirs(x::Vector, y::Vector) -> (BaseRing, BaseRing)
-
-Compute the Casimir invariants O_n and E_n from cross-ratio coordinates (x_i, y_i).
-"""
-function casimirs(x::Vector, y::Vector)
-    n = length(x)
-    if n != length(y)
-        error("x and y must have the same length")
-    end
-
-    if isodd(n)
-        On = prod(x)
-        En = prod(y)
-
-        return On, En
-    end
-   
-    if iseven(n)
-        On = prod(x[i] for i in 1:n if iseven(i)) + prod(x[i] for i in 1:n if isodd(i))
-        En = prod(y[i] for i in 1:n if iseven(i)) + prod(y[i] for i in 1:n if isodd(i))
-
-        return On, En
-    end
 end
