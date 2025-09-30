@@ -76,6 +76,8 @@ end
 
 """
     cross_ratio_on_line(a, b, c, d) -> BaseRing
+
+Note that we use the multiplicative inverse of the "normal" cross ratio formula.
 """
 function cross_ratio_on_line(a::AbstractVector, b::AbstractVector,
                              c::AbstractVector, d::AbstractVector; o::AbstractVector = [0,0,1])
@@ -91,8 +93,8 @@ function cross_ratio_on_line(a::AbstractVector, b::AbstractVector,
             error("Something is wrong")
         end
     end
-    num = det3(o,a,c) * det3(o,b,d)
-    den = det3(o,a,d) * det3(o,b,c)
+    num = det3(o,a,b) * det3(o,c,d)
+    den = det3(o,a,c) * det3(o,b,d)
 
     if den == 0
         error("Choose a different o")
