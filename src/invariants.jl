@@ -1,4 +1,4 @@
-export casimirs
+export casimirs, monodromy_invariants
 
 """
     casimirs(x::Vector, y::Vector) -> (BaseRing, BaseRing)
