@@ -98,7 +98,7 @@ end
 Plot the vertices of a twisted polygon in the affine plane.
 You can specify how many monodromy cycles to draw.
 """
-function plot_twisted_polygon(tp::TwistedPolygon; cycles=1)
+function plot_twisted_polygon(tp::TwistedPolygon; cycles=1, plotToAddTo=nothing)
     n = gonality(tp)
     verts = vertices_modulo_monodromy(tp)
 
@@ -115,8 +115,13 @@ function plot_twisted_polygon(tp::TwistedPolygon; cycles=1)
     xs = first.(xy)
     ys = last.(xy)
 
-    plot(xs, ys, seriestype=:shape, lw=2, linecolor=:blue, fillalpha=0.1,
-         marker=:circle, markersize=4, legend=false, aspect_ratio=1)
+    if isnothing(plotToAddTo)
+        return plot(xs, ys, seriestype=:shape, lw=2, linecolor=:blue, fillalpha=0.2,
+             marker=:circle, markersize=4, legend=false, aspect_ratio=1)
+    else
+        plot!(plotToAddTo, xs, ys, seriestype=:shape, lw=2, linecolor=:blue, fillalpha=0.2,
+              marker=:circle, markersize=4, legend=false, aspect_ratio=1)
+    end
 end
 
 """
@@ -126,8 +131,12 @@ Plot the twisted polygon after applying the pentagram map a specified number of 
 """
 function plot_pentagram_map(tp::TwistedPolygon, steps::Int; cycles=1)
     P = tp
+    plot = plot_twisted_polygon(P, cycles=cycles)
     for i in 1:steps
         P = pentagram_map(P)
+        plot_twisted_polygon(P, cycles=cycles, plotToAddTo=plot)
     end
-    plot_twisted_polygon(P, cycles=cycles)
+
+    # do the final plot 
+    return plot
 end
